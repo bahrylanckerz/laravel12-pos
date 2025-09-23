@@ -7,6 +7,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
 use App\Filament\Resources\Sales\SaleResource;
 use Filament\Resources\RelationManagers\RelationManager;
 
@@ -20,6 +21,9 @@ class SaleDetailsRelationManager extends RelationManager
     {
         return $table
             ->columns([
+                ImageColumn::make('product.image')
+                    ->label('Image')
+                    ->size(50),
                 TextColumn::make('product.name')
                     ->label('Product')
                     ->placeholder('N/A')

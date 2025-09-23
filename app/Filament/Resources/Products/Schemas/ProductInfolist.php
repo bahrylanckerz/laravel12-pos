@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
-use Filament\Infolists\Components\TextEntry;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Infolists\Components\TextEntry;
 
 class ProductInfolist
 {
@@ -14,6 +15,9 @@ class ProductInfolist
             ->components([
                 Section::make('Product Details')
                     ->schema([
+                        ImageColumn::make('image')
+                            ->label('Image')
+                            ->size(100),
                         TextEntry::make('category.name')
                             ->label('Category'),
                         TextEntry::make('supplier.name')

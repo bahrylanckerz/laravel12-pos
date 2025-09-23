@@ -4,11 +4,12 @@ namespace App\Filament\Resources\Products\Schemas;
 
 use App\Models\Category;
 use App\Models\Supplier;
-use Filament\Forms\Components\MarkdownEditor;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\MarkdownEditor;
 
 class ProductForm
 {
@@ -44,6 +45,14 @@ class ProductForm
                             ->nullable()
                             ->maxLength(65535)
                             ->columnSpanFull(),
+                        FileUpload::make('image')
+                            ->label('Product Image')
+                            ->image()
+                            ->nullable()
+                            ->maxSize(1024)
+                            ->directory('product')
+                            ->visibility('public')
+                            ->columnSpanFull(),
                         TextInput::make('price')
                             ->label('Price')
                             ->prefix('IDR ')
@@ -54,6 +63,7 @@ class ProductForm
                             ->label('Stock')
                             ->required()
                             ->numeric()
+                            ->default(0)
                             ->minValue(0)
                             ->step(1),
                     ])->columns(2),

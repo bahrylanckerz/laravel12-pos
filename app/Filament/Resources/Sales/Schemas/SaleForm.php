@@ -2,15 +2,16 @@
 
 namespace App\Filament\Resources\Sales\Schemas;
 
-use App\Models\Customer;
 use App\Models\Product;
+use App\Models\Customer;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Repeater;
+use Filament\Schemas\Components\Utilities\Get;
 
 class SaleForm
 {
@@ -72,19 +73,22 @@ class SaleForm
                             ->email()
                             ->maxLength(255)
                             ->nullable()
-                            ->disabled(),
+                            ->disabled()
+                            ->formatStateUsing(fn($state, Get $get) => $state ?? Customer::find($get('customer_id'))?->email),
                         TextInput::make('phone')
                             ->label('Phone Number')
                             ->maxLength(255)
                             ->nullable()
-                            ->disabled(),
+                            ->disabled()
+                            ->formatStateUsing(fn($state, Get $get) => $state ?? Customer::find($get('customer_id'))?->phone),
                         Textarea::make('address')
                             ->label('Address')
                             ->maxLength(65535)
                             ->rows(3)
                             ->nullable()
                             ->disabled()
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->formatStateUsing(fn($state, Get $get) => $state ?? Customer::find($get('customer_id'))?->address),
                     ])
                     ->columns(2),
                 Section::make('Order Details')

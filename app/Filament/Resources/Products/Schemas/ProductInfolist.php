@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Filament\Resources\Products\Schemas;
+
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+
+class ProductInfolist
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Section::make('Product Details')
+                    ->schema([
+                        TextEntry::make('category.name')
+                            ->label('Category'),
+                        TextEntry::make('supplier.name')
+                            ->label('Supplier'),
+                        TextEntry::make('name')
+                            ->label('Product Name'),
+                        TextEntry::make('barcode'),
+                        TextEntry::make('description')
+                            ->placeholder('-')
+                            ->columnSpanFull(),
+                        TextEntry::make('price')
+                            ->money('IDR', true),
+                        TextEntry::make('stock')
+                            ->numeric(),
+                        TextEntry::make('created_at')
+                            ->label('Created At')
+                            ->placeholder('-')
+                            ->dateTime(),
+                        TextEntry::make('updated_at')
+                            ->label('Updated At')
+                            ->placeholder('-')
+                            ->dateTime(),
+                    ])->columns(2),
+            ])
+            ->columns(1);
+    }
+}

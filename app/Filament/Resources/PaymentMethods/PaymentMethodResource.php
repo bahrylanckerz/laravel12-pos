@@ -22,6 +22,10 @@ class PaymentMethodResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCreditCard;
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Sales Management';
+
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $recordTitleAttribute = 'PaymentMethod';
 
     public static function form(Schema $schema): Schema

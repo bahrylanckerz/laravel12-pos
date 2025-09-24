@@ -18,17 +18,14 @@ class SalesTable
                 TextColumn::make('user.name')
                     ->label('User')
                     ->placeholder('N/A')
-                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('customer.name')
                     ->label('Customer')
                     ->placeholder('N/A')
-                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('payment_method.name')
                     ->label('Payment Method')
                     ->placeholder('N/A')
-                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('date')
                     ->date()

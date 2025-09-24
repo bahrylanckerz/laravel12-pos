@@ -15,9 +15,6 @@ class ProductInfolist
             ->components([
                 Section::make('Product Details')
                     ->schema([
-                        ImageColumn::make('image')
-                            ->label('Image')
-                            ->size(100),
                         TextEntry::make('category.name')
                             ->label('Category'),
                         TextEntry::make('supplier.name')

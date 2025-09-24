@@ -6,11 +6,13 @@ use App\Models\Product;
 use App\Models\Customer;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Schemas\Components\Utilities\Get;
 
 class SaleForm
@@ -46,7 +48,8 @@ class SaleForm
                             ->hiddenLabel()
                             ->prefix('Invoice:'),
                     ])
-                    ->columns(3),
+                    ->columns(3)
+                    ->columnSpanFull(),
                 Section::make('Customer Information')
                     ->schema([
                         Select::make('customer_id')
@@ -56,182 +59,179 @@ class SaleForm
                             ->reactive()
                             ->searchable()
                             ->required()
+                            ->columnSpanFull()
                             ->afterStateUpdated(function (callable $set, $state) {
                                 $customer = Customer::find($state);
                                 $set('email', $customer?->email);
                                 $set('phone', $customer?->phone);
                                 $set('address', $customer?->address);
                             }),
-                        Select::make('payment_method_id')
-                            ->label('Payment Method')
-                            ->relationship('paymentMethod', 'name')
-                            ->preload()
-                            ->searchable()
-                            ->required(),
-                        TextInput::make('email')
+                        Placeholder::make('email')
                             ->label('Email Address')
-                            ->email()
-                            ->maxLength(255)
-                            ->nullable()
-                            ->disabled()
-                            ->formatStateUsing(fn($state, Get $get) => $state ?? Customer::find($get('customer_id'))?->email),
-                        TextInput::make('phone')
+                            ->content(fn(Get $get) => $get('customer_id') ? Customer::find($get('customer_id'))?->name : '-'),
+                        Placeholder::make('phone')
                             ->label('Phone Number')
-                            ->maxLength(255)
-                            ->nullable()
-                            ->disabled()
-                            ->formatStateUsing(fn($state, Get $get) => $state ?? Customer::find($get('customer_id'))?->phone),
-                        Textarea::make('address')
+                            ->content(fn(Get $get) => $get('customer_id') ? Customer::find($get('customer_id'))?->phone : '-'),
+                        Placeholder::make('address')
                             ->label('Address')
-                            ->maxLength(65535)
-                            ->rows(3)
-                            ->nullable()
-                            ->disabled()
                             ->columnSpanFull()
-                            ->formatStateUsing(fn($state, Get $get) => $state ?? Customer::find($get('customer_id'))?->address),
+                            ->content(fn(Get $get) => $get('customer_id') ? Customer::find($get('customer_id'))?->address : '-'),
                     ])
-                    ->columns(2),
-                Section::make('Order Details')
+                    ->columns(2)
+                    ->columnSpanFull(),
+                Group::make()
                     ->schema([
-                        Repeater::make('saleDetails')
-                            ->label('Items')
-                            ->relationship()
+                        Section::make('Transaction Details')
                             ->schema([
-                                Select::make('product_id')
-                                    ->label('Product')
-                                    ->relationship('product', 'name')
-                                    ->preload()
-                                    ->reactive()
-                                    ->searchable()
-                                    ->required()
+                                Repeater::make('saleDetails')
+                                    ->label('Items')
+                                    ->relationship()
+                                    ->schema([
+                                        Select::make('product_id')
+                                            ->label('Product')
+                                            ->relationship('product', 'name')
+                                            ->preload()
+                                            ->reactive()
+                                            ->searchable()
+                                            ->required()
+                                            ->columnSpanFull()
+                                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                            ->afterStateUpdated(function (callable $set, $get, $state) {
+                                                $product = Product::find($state);
+                                                $set('price', $product?->price ?? 0);
+                                                $quantity = $get('quantity') ?? 1;
+                                                $discountItem = ($get('discount_item') ?? 0) * $quantity;
+                                                $subtotal = ($product?->price ?? 0) * $quantity - $discountItem;
+                                                $set('subtotal', $subtotal);
+
+                                                $items = $get('../../saleDetails') ?? [];
+                                                $total = collect($items)->sum(fn($item) => $item['subtotal'] ?? 0);
+                                                $set('../../total_amount', $total);
+                                                $discount = $get('../../discount_amount') ?? 0;
+                                                $tax = $get('../../tax_amount') ?? 0;
+                                                $grandTotal = $total - $discount + $tax;
+                                                $set('../../grand_total', $grandTotal);
+                                            }),
+                                        TextInput::make('quantity')
+                                            ->label('Quantity')
+                                            ->numeric()
+                                            ->default(1)
+                                            ->minValue(1)
+                                            ->required()
+                                            ->reactive()
+                                            ->afterStateUpdated(function (callable $set, $get, $state) {
+                                                $price = $get('price') ?? 0;
+                                                $discountItem = ($get('discount_item') ?? 0) * $state;
+                                                $subtotal = $price * $state - $discountItem;
+                                                $set('subtotal', $subtotal);
+
+                                                $items = $get('../../saleDetails') ?? [];
+                                                $total = collect($items)->sum(fn($item) => $item['subtotal'] ?? 0);
+                                                $set('../../total_amount', $total);
+                                                $discount = $get('../../discount_amount') ?? 0;
+                                                $tax = $get('../../tax_amount') ?? 0;
+                                                $grandTotal = $total - $discount + $tax;
+                                                $set('../../grand_total', $grandTotal);
+                                            }),
+                                        TextInput::make('price')
+                                            ->label('Price')
+                                            ->prefix('IDR')
+                                            ->numeric()
+                                            ->default(0)
+                                            ->disabled()
+                                            ->dehydrated()
+                                            ->required(),
+                                        TextInput::make('discount_item')
+                                            ->label('Discount Item')
+                                            ->prefix('IDR')
+                                            ->numeric()
+                                            ->default(0)
+                                            ->nullable()
+                                            ->reactive()
+                                            ->afterStateUpdated(function (callable $set, $get, $state) {
+                                                $price = $get('price') ?? 0;
+                                                $quantity = $get('quantity') ?? 1;
+                                                $discountItem = $state * $quantity;
+                                                $subtotal = $price * $quantity - $discountItem;
+                                                $set('subtotal', $subtotal);
+
+                                                $items = $get('../../saleDetails') ?? [];
+                                                $total = collect($items)->sum(fn($item) => $item['subtotal'] ?? 0);
+                                                $set('../../total_amount', $total);
+                                                $discount = $get('../../discount_amount') ?? 0;
+                                                $tax = $get('../../tax_amount') ?? 0;
+                                                $grandTotal = $total - $discount + $tax;
+                                                $set('../../grand_total', $grandTotal);
+                                            }),
+                                        TextInput::make('subtotal')
+                                            ->label('Subtotal')
+                                            ->prefix('IDR')
+                                            ->numeric()
+                                            ->default(0)
+                                            ->disabled()
+                                            ->dehydrated()
+                                            ->required(),
+                                    ])
+                                    ->defaultItems(1)
+                                    ->minItems(1)
                                     ->columnSpanFull()
-                                    ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                                    ->afterStateUpdated(function (callable $set, $get, $state) {
-                                        $product = Product::find($state);
-                                        $set('price', $product?->price ?? 0);
-                                        $quantity = $get('quantity') ?? 1;
-                                        $discountItem = ($get('discount_item') ?? 0) * $quantity;
-                                        $subtotal = ($product?->price ?? 0) * $quantity - $discountItem;
-                                        $set('subtotal', $subtotal);
-
-                                        $items = $get('../../saleDetails') ?? [];
-                                        $total = collect($items)->sum(fn($item) => $item['subtotal'] ?? 0);
-                                        $set('../../total_amount', $total);
-                                        $discount = $get('../../discount_amount') ?? 0;
-                                        $tax = $get('../../tax_amount') ?? 0;
-                                        $grandTotal = $total - $discount + $tax;
-                                        $set('../../grand_total', $grandTotal);
-                                    }),
-                                TextInput::make('quantity')
-                                    ->label('Quantity')
-                                    ->numeric()
-                                    ->default(1)
-                                    ->minValue(1)
                                     ->required()
-                                    ->reactive()
-                                    ->afterStateUpdated(function (callable $set, $get, $state) {
-                                        $price = $get('price') ?? 0;
-                                        $discountItem = ($get('discount_item') ?? 0) * $state;
-                                        $subtotal = $price * $state - $discountItem;
-                                        $set('subtotal', $subtotal);
-
-                                        $items = $get('../../saleDetails') ?? [];
-                                        $total = collect($items)->sum(fn($item) => $item['subtotal'] ?? 0);
-                                        $set('../../total_amount', $total);
-                                        $discount = $get('../../discount_amount') ?? 0;
-                                        $tax = $get('../../tax_amount') ?? 0;
-                                        $grandTotal = $total - $discount + $tax;
-                                        $set('../../grand_total', $grandTotal);
-                                    }),
-                                TextInput::make('price')
-                                    ->label('Price')
+                                    ->columns(2),
+                            ])
+                            ->columns(1),
+                    ])
+                    ->columnSpan(2),
+                Group::make()
+                    ->schema([
+                        Section::make('Payment Information')
+                            ->schema([
+                                Select::make('payment_method_id')
+                                    ->label('Payment Method')
+                                    ->relationship('paymentMethod', 'name')
+                                    ->preload()
+                                    ->searchable()
+                                    ->required(),
+                                TextInput::make('total_amount')
+                                    ->label('Total Amount')
                                     ->prefix('IDR')
-                                    ->numeric()
                                     ->default(0)
                                     ->disabled()
                                     ->dehydrated()
                                     ->required(),
-                                TextInput::make('discount_item')
-                                    ->label('Discount Item')
+                                TextInput::make('discount_amount')
+                                    ->label('Discount Amount')
                                     ->prefix('IDR')
-                                    ->numeric()
                                     ->default(0)
                                     ->nullable()
                                     ->reactive()
                                     ->afterStateUpdated(function (callable $set, $get, $state) {
-                                        $price = $get('price') ?? 0;
-                                        $quantity = $get('quantity') ?? 1;
-                                        $discountItem = $state * $quantity;
-                                        $subtotal = $price * $quantity - $discountItem;
-                                        $set('subtotal', $subtotal);
-
-                                        $items = $get('../../saleDetails') ?? [];
-                                        $total = collect($items)->sum(fn($item) => $item['subtotal'] ?? 0);
-                                        $set('../../total_amount', $total);
-                                        $discount = $get('../../discount_amount') ?? 0;
-                                        $tax = $get('../../tax_amount') ?? 0;
-                                        $grandTotal = $total - $discount + $tax;
-                                        $set('../../grand_total', $grandTotal);
+                                        $total = $get('total_amount') ?? 0;
+                                        $tax = $get('tax_amount') ?? 0;
+                                        $grandTotal = $total - $state + $tax;
+                                        $set('grand_total', $grandTotal);
                                     }),
-                                TextInput::make('subtotal')
-                                    ->label('Subtotal')
+                                TextInput::make('tax_amount')
+                                    ->label('Tax Amount')
                                     ->prefix('IDR')
-                                    ->numeric()
+                                    ->default(0)
+                                    ->nullable()
+                                    ->reactive()
+                                    ->afterStateUpdated(function (callable $set, $get, $state) {
+                                        $total = $get('total_amount') ?? 0;
+                                        $discount = $get('discount_amount') ?? 0;
+                                        $grandTotal = $total - $discount + $state;
+                                        $set('grand_total', $grandTotal);
+                                    }),
+                                TextInput::make('grand_total')
+                                    ->label('Grand Total')
+                                    ->prefix('IDR')
                                     ->default(0)
                                     ->disabled()
                                     ->dehydrated()
                                     ->required(),
-                            ])
-                            ->defaultItems(1)
-                            ->minItems(1)
-                            ->columnSpanFull()
-                            ->required()
-                            ->columns(4),
-                    ])
-                    ->columns(1),
-                Section::make('Transaction Details')
-                    ->schema([
-                        TextInput::make('total_amount')
-                            ->label('Total Amount')
-                            ->prefix('IDR')
-                            ->default(0)
-                            ->disabled()
-                            ->dehydrated()
-                            ->required(),
-                        TextInput::make('discount_amount')
-                            ->label('Discount Amount')
-                            ->prefix('IDR')
-                            ->default(0)
-                            ->nullable()
-                            ->reactive()
-                            ->afterStateUpdated(function (callable $set, $get, $state) {
-                                $total = $get('total_amount') ?? 0;
-                                $tax = $get('tax_amount') ?? 0;
-                                $grandTotal = $total - $state + $tax;
-                                $set('grand_total', $grandTotal);
-                            }),
-                        TextInput::make('tax_amount')
-                            ->label('Tax Amount')
-                            ->prefix('IDR')
-                            ->default(0)
-                            ->nullable()
-                            ->reactive()
-                            ->afterStateUpdated(function (callable $set, $get, $state) {
-                                $total = $get('total_amount') ?? 0;
-                                $discount = $get('discount_amount') ?? 0;
-                                $grandTotal = $total - $discount + $state;
-                                $set('grand_total', $grandTotal);
-                            }),
-                        TextInput::make('grand_total')
-                            ->label('Grand Total')
-                            ->prefix('IDR')
-                            ->default(0)
-                            ->disabled()
-                            ->dehydrated()
-                            ->required(),
-                    ])
-                    ->columns(4),
+                            ]),
+                    ]),
             ])
-            ->columns(1);
+            ->columns(3);
     }
 }

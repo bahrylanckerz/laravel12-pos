@@ -34,6 +34,9 @@ class SaleInfolist
                         TextEntry::make('discount_amount')
                             ->label('Discount Amount')
                             ->money('IDR', true),
+                        TextEntry::make('tax_percentage')
+                            ->label('Tax Percentage')
+                            ->suffix('%'),
                         TextEntry::make('tax_amount')
                             ->label('Tax Amount')
                             ->money('IDR', true),

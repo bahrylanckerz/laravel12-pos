@@ -14,6 +14,7 @@ class Sale extends Model
         'date',
         'total_amount',
         'discount_amount',
+        'tax_percentage',
         'tax_amount',
         'grand_total',
     ];

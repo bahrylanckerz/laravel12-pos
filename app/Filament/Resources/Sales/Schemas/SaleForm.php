@@ -129,8 +129,11 @@ class SaleForm
                                                 $total = collect($items)->sum(fn($item) => $item['subtotal'] ?? 0);
                                                 $set('../../total_amount', $total);
                                                 $discount = $get('../../discount_amount') ?? 0;
-                                                $tax = $get('../../tax_amount') ?? 0;
-                                                $grandTotal = $total - $discount + $tax;
+                                                $taxPercentage = $get('../../tax_percentage') ?? 0;
+                                                $totalAmount = $total - $discount;
+                                                $taxAmount = ($taxPercentage / 100) * $totalAmount;
+                                                $set('../../tax_amount', $taxAmount);
+                                                $grandTotal = $totalAmount + $taxAmount;
                                                 $set('../../grand_total', $grandTotal);
                                             }),
                                         TextInput::make('price')
@@ -159,8 +162,11 @@ class SaleForm
                                                 $total = collect($items)->sum(fn($item) => $item['subtotal'] ?? 0);
                                                 $set('../../total_amount', $total);
                                                 $discount = $get('../../discount_amount') ?? 0;
-                                                $tax = $get('../../tax_amount') ?? 0;
-                                                $grandTotal = $total - $discount + $tax;
+                                                $taxPercentage = $get('../../tax_percentage') ?? 0;
+                                                $totalAmount = $total - $discount;
+                                                $taxAmount = ($taxPercentage / 100) * $totalAmount;
+                                                $set('../../tax_amount', $taxAmount);
+                                                $grandTotal = $totalAmount + $taxAmount;
                                                 $set('../../grand_total', $grandTotal);
                                             }),
                                         TextInput::make('subtotal')
@@ -206,8 +212,29 @@ class SaleForm
                                     ->reactive()
                                     ->afterStateUpdated(function (callable $set, $get, $state) {
                                         $total = $get('total_amount') ?? 0;
-                                        $tax = $get('tax_amount') ?? 0;
-                                        $grandTotal = $total - $state + $tax;
+                                        $taxPercentage = $get('tax_percentage') ?? 0;
+                                        $totalAmount = $total - $state;
+                                        $taxAmount = ($taxPercentage / 100) * $totalAmount;
+                                        $set('tax_amount', $taxAmount);
+                                        $grandTotal = $totalAmount + $taxAmount;
+                                        $set('grand_total', $grandTotal);
+                                    }),
+                                TextInput::make('tax_percentage')
+                                    ->label('Tax Percentage')
+                                    ->suffix('%')
+                                    ->default(0)
+                                    ->minValue(0)
+                                    ->maxValue(100)
+                                    ->numeric()
+                                    ->nullable()
+                                    ->reactive()
+                                    ->afterStateUpdated(function (callable $set, $get, $state) {
+                                        $total = $get('total_amount') ?? 0;
+                                        $discount = $get('discount_amount') ?? 0;
+                                        $totalAmount = $total - $discount;
+                                        $taxAmount = ($state / 100) * $totalAmount;
+                                        $set('tax_amount', $taxAmount);
+                                        $grandTotal = $totalAmount + $taxAmount;
                                         $set('grand_total', $grandTotal);
                                     }),
                                 TextInput::make('tax_amount')
@@ -215,13 +242,8 @@ class SaleForm
                                     ->prefix('IDR')
                                     ->default(0)
                                     ->nullable()
-                                    ->reactive()
-                                    ->afterStateUpdated(function (callable $set, $get, $state) {
-                                        $total = $get('total_amount') ?? 0;
-                                        $discount = $get('discount_amount') ?? 0;
-                                        $grandTotal = $total - $discount + $state;
-                                        $set('grand_total', $grandTotal);
-                                    }),
+                                    ->disabled()
+                                    ->dehydrated(),
                                 TextInput::make('grand_total')
                                     ->label('Grand Total')
                                     ->prefix('IDR')

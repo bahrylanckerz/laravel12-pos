@@ -29,6 +29,7 @@ class SalesTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('date')
                     ->date()
+                    ->sortable()
                     ->searchable(),
                 TextColumn::make('invoice_number')
                     ->label('Invoice Number')
@@ -36,17 +37,18 @@ class SalesTable
                 TextColumn::make('total_amount')
                     ->label('Total Amount')
                     ->money('IDR', true)
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('discount_amount')
                     ->label('Discount Amount')
                     ->money('IDR', true)
-                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('tax_percentage')
+                    ->label('Tax Percentage')
+                    ->suffix('%')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('tax_amount')
                     ->label('Tax Amount')
                     ->money('IDR', true)
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('grand_total')
                     ->label('Grand Total')

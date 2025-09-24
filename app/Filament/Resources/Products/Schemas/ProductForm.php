@@ -19,18 +19,35 @@ class ProductForm
             ->components([
                 Section::make('Product Details')
                     ->schema([
-                        Select::make('category_id')
-                            ->label('Category')
-                            ->options(Category::all()->pluck('name', 'id'))
-                            ->searchable()
-                            ->required()
-                            ->exists(table: 'categories', column: 'id'),
                         Select::make('supplier_id')
                             ->label('Supplier')
                             ->options(Supplier::all()->pluck('name', 'id'))
                             ->searchable()
                             ->required()
-                            ->exists(table: 'suppliers', column: 'id'),
+                            ->exists(table: 'suppliers', column: 'id')
+                            ->columnSpanFull(),
+                        Select::make('category_id')
+                            ->label('Category')
+                            ->options(Category::all()->pluck('name', 'id'))
+                            ->searchable()
+                            ->required()
+                            ->reactive()
+                            ->exists(table: 'categories', column: 'id'),
+                        Select::make('sub_category_id')
+                            ->label('Sub Category')
+                            ->options(function (callable $get) {
+                                $category = Category::find($get('category_id'));
+                                if (!$category) {
+                                    return [];
+                                }
+                                return $category->subCategories->pluck('name', 'id');
+                            })
+                            ->disabled(fn(callable $get) => $get('category_id') === null)
+                            ->dehydrated()
+                            ->searchable()
+                            ->reactive()
+                            ->required()
+                            ->exists(table: 'sub_categories', column: 'id'),
                         TextInput::make('name')
                             ->label('Name')
                             ->required()

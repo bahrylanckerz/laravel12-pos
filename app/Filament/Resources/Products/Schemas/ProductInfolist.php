@@ -16,12 +16,17 @@ class ProductInfolist
                 Section::make('Product Details')
                     ->schema([
                         TextEntry::make('category.name')
-                            ->label('Category'),
+                            ->label('Category')
+                            ->placeholder('-'),
                         TextEntry::make('supplier.name')
-                            ->label('Supplier'),
+                            ->label('Supplier')
+                            ->placeholder('-'),
+                        TextEntry::make('subCategory.name')
+                            ->label('Sub Category')
+                            ->placeholder('-'),
+                        TextEntry::make('barcode'),
                         TextEntry::make('name')
                             ->label('Product Name'),
-                        TextEntry::make('barcode'),
                         TextEntry::make('description')
                             ->placeholder('-')
                             ->columnSpanFull(),

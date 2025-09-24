@@ -36,19 +36,32 @@ class SalesTable
                 TextColumn::make('total_amount')
                     ->label('Total Amount')
                     ->money('IDR', true)
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('discount_amount')
                     ->label('Discount Amount')
                     ->money('IDR', true)
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('tax_amount')
                     ->label('Tax Amount')
                     ->money('IDR', true)
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('grand_total')
                     ->label('Grand Total')
                     ->money('IDR', true)
                     ->sortable(),
+                TextColumn::make('paymentMethod.name')
+                    ->label('Payment Method')
+                    ->placeholder('N/A')
+                    ->badge()
+                    ->colors([
+                        'info' => 'Cash',
+                        'success' => 'Credit Card',
+                        'warning' => 'Bank Transfer',
+                        'danger' => 'E-Wallet',
+                    ]),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

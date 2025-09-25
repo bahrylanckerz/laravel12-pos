@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\Sales\Pages;
 
 use Filament\Actions\CreateAction;
+use Filament\Support\Icons\Heroicon;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 use App\Filament\Resources\Sales\SaleResource;
@@ -10,6 +12,16 @@ use App\Filament\Resources\Sales\SaleResource;
 class ListSales extends ListRecords
 {
     protected static string $resource = SaleResource::class;
+
+    protected function getDeletedNotification(): ?Notification
+    {
+        return Notification::make()
+            ->title('Delete Successfully!')
+            ->body('The sale has been deleted.')
+            ->icon(Heroicon::OutlinedCheckCircle)
+            ->success()
+            ->send();
+    }
 
     protected function getHeaderActions(): array
     {

@@ -13,6 +13,16 @@ class EditCustomer extends EditRecord
 {
     protected static string $resource = CustomerResource::class;
 
+    protected function getSavedNotification(): ?Notification
+    {
+        return Notification::make()
+            ->title('Save Successfully!')
+            ->body('The customer has been updated.')
+            ->icon(Heroicon::OutlinedCheckCircle)
+            ->success()
+            ->send();
+    }
+
     protected function getHeaderActions(): array
     {
         return [

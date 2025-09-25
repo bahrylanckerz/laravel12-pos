@@ -22,6 +22,8 @@ class CategoryResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
+    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Tag;
+
     protected static string|\UnitEnum|null $navigationGroup = 'Products Management';
 
     protected static ?int $navigationSort = 3;

@@ -20,7 +20,9 @@ class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquaresPlus;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquares2x2;
+
+    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Squares2x2;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Products Management';
 
@@ -58,5 +60,15 @@ class ProductResource extends Resource
             'view' => ViewProduct::route('/{record}'),
             'edit' => EditProduct::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count() ?: null;
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Total Products';
     }
 }

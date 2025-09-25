@@ -61,4 +61,16 @@ class PaymentMethodResource extends Resource
             'edit' => EditPaymentMethod::route('/{record}/edit'),
         ];
     }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name'];
+    }
+
+    public static function getGlobalSearchResultDetails($record): array
+    {
+        return [
+            'Name' => $record->name,
+        ];
+    }
 }

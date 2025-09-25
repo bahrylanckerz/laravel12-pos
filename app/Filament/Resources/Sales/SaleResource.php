@@ -62,4 +62,19 @@ class SaleResource extends Resource
             'edit' => EditSale::route('/{record}/edit'),
         ];
     }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['invoice_number'];
+    }
+
+    public static function getGlobalSearchResultDetails($record): array
+    {
+        return [
+            'Date' => $record->date,
+            'Invoice Number' => $record->invoice_number,
+            'Grand Total' => 'IDR ' . number_format($record->grand_total, 2),
+            'Payment Method' => $record->paymentMethod?->name ?? 'N/A',
+        ];
+    }
 }

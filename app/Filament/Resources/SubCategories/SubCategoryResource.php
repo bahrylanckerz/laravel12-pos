@@ -61,4 +61,17 @@ class SubCategoryResource extends Resource
             'edit' => EditSubCategory::route('/{record}/edit'),
         ];
     }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name'];
+    }
+
+    public static function getGlobalSearchResultDetails($record): array
+    {
+        return [
+            'Name' => $record->name,
+            'Category' => $record->category->name,
+        ];
+    }
 }

@@ -62,6 +62,11 @@ class ProductResource extends Resource
         ];
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'barcode'];
+    }
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count() ?: null;
@@ -70,5 +75,15 @@ class ProductResource extends Resource
     public static function getNavigationBadgeTooltip(): ?string
     {
         return 'Total Products';
+    }
+
+    public static function getGlobalSearchResultDetails($record): array
+    {
+        return [
+            'Name' => $record->name,
+            'Barcode' => $record->barcode,
+            'Price' => 'IDR ' . number_format($record->price, 2),
+            'Stock' => $record->stock,
+        ];
     }
 }

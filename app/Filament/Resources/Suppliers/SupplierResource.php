@@ -61,4 +61,18 @@ class SupplierResource extends Resource
             'edit' => EditSupplier::route('/{record}/edit'),
         ];
     }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'email', 'phone'];
+    }
+
+    public static function getGlobalSearchResultDetails($record): array
+    {
+        return [
+            'Name' => $record->name,
+            'Email' => $record->email,
+            'Phone' => $record->phone,
+        ];
+    }
 }

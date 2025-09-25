@@ -56,7 +56,6 @@ class SaleForm
                             ->label('Customer')
                             ->relationship('customer', 'name')
                             ->preload()
-                            ->reactive()
                             ->searchable()
                             ->required()
                             ->columnSpanFull()
@@ -65,7 +64,29 @@ class SaleForm
                                 $set('email', $customer?->email);
                                 $set('phone', $customer?->phone);
                                 $set('address', $customer?->address);
-                            }),
+                            })
+                            ->createOptionForm([
+                                Group::make([
+                                    TextInput::make('name')
+                                        ->required()
+                                        ->columnSpanFull(),
+                                    TextInput::make('email')
+                                        ->label('Email Address')
+                                        ->unique(ignoreRecord: true)
+                                        ->email()
+                                        ->required(),
+                                    TextInput::make('phone')
+                                        ->label('Phone Number')
+                                        ->numeric()
+                                        ->required(),
+                                    Textarea::make('address')
+                                        ->columnSpanFull(),
+                                ])->columns(2),
+                            ])
+                            ->createOptionUsing(function ($data) {
+                                return Customer::create($data)->getKey();
+                            })
+                            ->reactive(),
                         Placeholder::make('email')
                             ->label('Email Address')
                             ->content(fn(Get $get) => $get('customer_id') ? Customer::find($get('customer_id'))?->name : '-'),

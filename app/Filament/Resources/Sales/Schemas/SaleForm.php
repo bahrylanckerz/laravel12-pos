@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Sales\Schemas;
 use App\Models\Product;
 use App\Models\Customer;
 use Filament\Schemas\Schema;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Group;
 use Filament\Forms\Components\Repeater;
@@ -133,6 +134,14 @@ class SaleForm
                                                 $grandTotal = $total - $discount + $tax;
                                                 $set('../../grand_total', $grandTotal);
                                             }),
+                                        TextInput::make('price')
+                                            ->label('Price')
+                                            ->prefix('IDR')
+                                            ->numeric()
+                                            ->default(0)
+                                            ->disabled()
+                                            ->dehydrated()
+                                            ->required(),
                                         TextInput::make('quantity')
                                             ->label('Quantity')
                                             ->numeric()
@@ -157,39 +166,34 @@ class SaleForm
                                                 $grandTotal = $totalAmount + $taxAmount;
                                                 $set('../../grand_total', $grandTotal);
                                             }),
-                                        TextInput::make('price')
-                                            ->label('Price')
-                                            ->prefix('IDR')
-                                            ->numeric()
+                                        Hidden::make('discount_item')
                                             ->default(0)
-                                            ->disabled()
-                                            ->dehydrated()
-                                            ->required(),
-                                        TextInput::make('discount_item')
-                                            ->label('Discount Item')
-                                            ->prefix('IDR')
-                                            ->numeric()
-                                            ->default(0)
-                                            ->nullable()
-                                            ->reactive()
-                                            ->afterStateUpdated(function (callable $set, $get, $state) {
-                                                $price = $get('price') ?? 0;
-                                                $quantity = $get('quantity') ?? 1;
-                                                $discountItem = $state * $quantity;
-                                                $subtotal = $price * $quantity - $discountItem;
-                                                $set('subtotal', $subtotal);
+                                            ->nullable(),
+                                        // TextInput::make('discount_item')
+                                        //     ->label('Discount Item')
+                                        //     ->prefix('IDR')
+                                        //     ->numeric()
+                                        //     ->default(0)
+                                        //     ->nullable()
+                                        //     ->reactive()
+                                        //     ->afterStateUpdated(function (callable $set, $get, $state) {
+                                        //         $price = $get('price') ?? 0;
+                                        //         $quantity = $get('quantity') ?? 1;
+                                        //         $discountItem = $state * $quantity;
+                                        //         $subtotal = $price * $quantity - $discountItem;
+                                        //         $set('subtotal', $subtotal);
 
-                                                $items = $get('../../saleDetails') ?? [];
-                                                $total = collect($items)->sum(fn($item) => $item['subtotal'] ?? 0);
-                                                $set('../../total_amount', $total);
-                                                $discount = $get('../../discount_amount') ?? 0;
-                                                $taxPercentage = $get('../../tax_percentage') ?? 0;
-                                                $totalAmount = $total - $discount;
-                                                $taxAmount = ($taxPercentage / 100) * $totalAmount;
-                                                $set('../../tax_amount', $taxAmount);
-                                                $grandTotal = $totalAmount + $taxAmount;
-                                                $set('../../grand_total', $grandTotal);
-                                            }),
+                                        //         $items = $get('../../saleDetails') ?? [];
+                                        //         $total = collect($items)->sum(fn($item) => $item['subtotal'] ?? 0);
+                                        //         $set('../../total_amount', $total);
+                                        //         $discount = $get('../../discount_amount') ?? 0;
+                                        //         $taxPercentage = $get('../../tax_percentage') ?? 0;
+                                        //         $totalAmount = $total - $discount;
+                                        //         $taxAmount = ($taxPercentage / 100) * $totalAmount;
+                                        //         $set('../../tax_amount', $taxAmount);
+                                        //         $grandTotal = $totalAmount + $taxAmount;
+                                        //         $set('../../grand_total', $grandTotal);
+                                        //     }),
                                         TextInput::make('subtotal')
                                             ->label('Subtotal')
                                             ->prefix('IDR')
@@ -203,7 +207,7 @@ class SaleForm
                                     ->minItems(1)
                                     ->columnSpanFull()
                                     ->required()
-                                    ->columns(2),
+                                    ->columns(3),
                             ])
                             ->columns(1),
                     ])

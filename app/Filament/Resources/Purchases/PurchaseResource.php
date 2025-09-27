@@ -2,19 +2,20 @@
 
 namespace App\Filament\Resources\Purchases;
 
-use App\Filament\Resources\Purchases\Pages\CreatePurchase;
-use App\Filament\Resources\Purchases\Pages\EditPurchase;
-use App\Filament\Resources\Purchases\Pages\ListPurchases;
-use App\Filament\Resources\Purchases\Pages\ViewPurchase;
-use App\Filament\Resources\Purchases\Schemas\PurchaseForm;
-use App\Filament\Resources\Purchases\Schemas\PurchaseInfolist;
-use App\Filament\Resources\Purchases\Tables\PurchasesTable;
-use App\Models\Purchase;
 use BackedEnum;
-use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
+use App\Models\Purchase;
 use Filament\Tables\Table;
+use Filament\Schemas\Schema;
+use Filament\Resources\Resource;
+use Filament\Support\Icons\Heroicon;
+use App\Filament\Resources\Purchases\Pages\EditPurchase;
+use App\Filament\Resources\Purchases\Pages\ViewPurchase;
+use App\Filament\Resources\Purchases\Pages\ListPurchases;
+use App\Filament\Resources\Purchases\Pages\CreatePurchase;
+use App\Filament\Resources\Purchases\Schemas\PurchaseForm;
+use App\Filament\Resources\Purchases\Tables\PurchasesTable;
+use App\Filament\Resources\Purchases\Schemas\PurchaseInfolist;
+use App\Filament\Resources\Purchases\RelationManagers\PurchaseDetailsRelationManager;
 
 class PurchaseResource extends Resource
 {
@@ -44,7 +45,7 @@ class PurchaseResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            PurchaseDetailsRelationManager::class,
         ];
     }
 

@@ -25,6 +25,10 @@ class PurchaseResource extends Resource
 
     protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::ShoppingCart;
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Transaction Management';
+
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $recordTitleAttribute = 'Purchase';
 
     public static function form(Schema $schema): Schema

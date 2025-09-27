@@ -26,7 +26,7 @@ class SupplierResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Users Management';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 14;
 
     protected static ?string $recordTitleAttribute = 'Supplier';
 

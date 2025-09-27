@@ -26,7 +26,7 @@ class SubCategoryResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Products Management';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 8;
 
     protected static ?string $recordTitleAttribute = 'SubCategory';
 

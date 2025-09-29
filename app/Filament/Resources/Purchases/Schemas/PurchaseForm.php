@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Purchases\Schemas;
 use App\Models\Product;
 use App\Models\Supplier;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Group;
@@ -13,6 +14,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\DatePicker;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Placeholder;
 use Filament\Schemas\Components\Utilities\Get;
 
@@ -26,7 +28,7 @@ class PurchaseForm
                     ->schema([
                         Select::make('user_id')
                             ->relationship('user', 'name')
-                            ->default(auth()->id())
+                            ->default(Auth::id())
                             ->disabled()
                             ->dehydrated()
                             ->hiddenLabel()
@@ -57,6 +59,7 @@ class PurchaseForm
                             ->label('Supplier')
                             ->relationship('supplier', 'name')
                             ->preload()
+                            ->reactive()
                             ->searchable()
                             ->required()
                             ->columnSpanFull()
@@ -111,7 +114,7 @@ class PurchaseForm
                                     ->schema([
                                         Select::make('product_id')
                                             ->label('Product')
-                                            ->relationship('product', 'name')
+                                            ->relationship('product', 'name', fn(Builder $query, callable $get) => $query->where('supplier_id', $get('../../supplier_id')))
                                             ->preload()
                                             ->reactive()
                                             ->searchable()

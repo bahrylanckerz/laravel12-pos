@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Sales\Schemas;
 use App\Models\Product;
 use App\Models\Customer;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Group;
@@ -26,7 +27,7 @@ class SaleForm
                     ->schema([
                         Select::make('user_id')
                             ->relationship('user', 'name')
-                            ->default(auth()->id())
+                            ->default(Auth::id())
                             ->disabled()
                             ->dehydrated()
                             ->hiddenLabel()
@@ -111,7 +112,7 @@ class SaleForm
                                     ->schema([
                                         Select::make('product_id')
                                             ->label('Product')
-                                            ->relationship('product', 'name')
+                                            ->relationship('product', 'name', fn($query) => $query->where('stock', '>', 0))
                                             ->preload()
                                             ->reactive()
                                             ->searchable()

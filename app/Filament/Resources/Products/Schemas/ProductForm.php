@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Supplier;
 use App\Models\SubCategory;
 use Filament\Schemas\Schema;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
@@ -24,6 +25,9 @@ class ProductForm
             ->components([
                 Section::make('Product Details')
                     ->schema([
+                        Hidden::make('id')
+                            ->visibleOn('edit')
+                            ->default(fn($record) => $record?->id),
                         Select::make('supplier_id')
                             ->label('Supplier')
                             ->options(Supplier::all()->pluck('name', 'id'))

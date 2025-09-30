@@ -82,4 +82,18 @@ class InventoryLogResource extends Resource
     {
         return false;
     }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['product.name'];
+    }
+
+    public static function getGlobalSearchResultDetails($record): array
+    {
+        return [
+            'User' => $record->user->name,
+            'Type' => $record->change_type,
+            'Quantity' => $record->quantity_change,
+        ];
+    }
 }

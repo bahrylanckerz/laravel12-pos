@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\InventoryLogs\Tables;
+namespace App\Filament\Resources\ReturnSales\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -9,28 +9,36 @@ use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class InventoryLogsTable
+class ReturnSalesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('user.name')
-                    ->label('User')
+                TextColumn::make('date')
+                    ->date()
                     ->sortable(),
-                TextColumn::make('product.name')
-                    ->label('Product')
+                TextColumn::make('sale.invoice_number')
+                    ->label('Sale Invoice')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('change_type')
-                    ->label('Type')
-                    ->badge(),
-                TextColumn::make('quantity_change')
-                    ->label('Quantity')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('notes')
+                TextColumn::make('user.name')
+                    ->label('User')
+                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('customer.name')
+                    ->label('Customer')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('total_refund')
+                    ->label('Total Refund')
+                    ->money('IDR', true)
+                    ->sortable(),
+                TextColumn::make('paymentMethod.name')
+                    ->label('Payment Method')
+                    ->searchable()
+                    ->badge()
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -44,8 +52,7 @@ class InventoryLogsTable
                 //
             ])
             ->recordActions([
-                // ViewAction::make(),
-                // EditAction::make(),
+                ViewAction::make(),
             ])
             ->toolbarActions([
                 // BulkActionGroup::make([

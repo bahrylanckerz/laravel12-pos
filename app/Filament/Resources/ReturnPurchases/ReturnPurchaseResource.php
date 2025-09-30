@@ -16,6 +16,7 @@ use App\Filament\Resources\ReturnPurchases\Pages\CreateReturnPurchase;
 use App\Filament\Resources\ReturnPurchases\Schemas\ReturnPurchaseForm;
 use App\Filament\Resources\ReturnPurchases\Tables\ReturnPurchasesTable;
 use App\Filament\Resources\ReturnPurchases\Schemas\ReturnPurchaseInfolist;
+use App\Filament\Resources\ReturnPurchases\RelationManagers\ReturnPurchaseDetailsRelationManager;
 
 class ReturnPurchaseResource extends Resource
 {
@@ -49,7 +50,7 @@ class ReturnPurchaseResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ReturnPurchaseDetailsRelationManager::class,
         ];
     }
 

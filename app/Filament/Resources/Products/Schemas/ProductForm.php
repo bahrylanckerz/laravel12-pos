@@ -14,8 +14,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\MarkdownEditor;
-use Filament\Schemas\Components\Utilities\Get;
+use Filament\Forms\Components\RichEditor;
 
 class ProductForm
 {
@@ -122,7 +121,7 @@ class ProductForm
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
-                        MarkdownEditor::make('description')
+                        RichEditor::make('description')
                             ->label('Description')
                             ->nullable()
                             ->maxLength(65535)
@@ -132,6 +131,7 @@ class ProductForm
                             ->image()
                             ->nullable()
                             ->maxSize(1024)
+                            ->disk('public')
                             ->directory('product')
                             ->visibility('public')
                             ->columnSpanFull(),

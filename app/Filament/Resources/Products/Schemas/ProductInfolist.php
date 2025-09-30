@@ -29,6 +29,7 @@ class ProductInfolist
                             ->label('Product Name'),
                         TextEntry::make('description')
                             ->placeholder('-')
+                            ->html()
                             ->columnSpanFull(),
                         TextEntry::make('price')
                             ->money('IDR', true),

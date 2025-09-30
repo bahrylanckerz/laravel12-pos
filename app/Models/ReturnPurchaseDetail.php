@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ReturnSaleDetail extends Model
+class ReturnPurchaseDetail extends Model
 {
     protected $fillable = [
-        'return_sale_id',
+        'return_purchase_id',
         'product_id',
         'quantity',
         'price',
@@ -15,9 +15,9 @@ class ReturnSaleDetail extends Model
         'notes',
     ];
 
-    public function returnSale()
+    public function returnPurchase()
     {
-        return $this->belongsTo(ReturnSale::class);
+        return $this->belongsTo(ReturnPurchase::class);
     }
 
     public function product()

@@ -2,8 +2,9 @@
 
 namespace App\Filament\Resources\ReturnSales\Schemas;
 
-use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 
 class ReturnSaleInfolist
 {
@@ -11,31 +12,38 @@ class ReturnSaleInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('sale_id')
-                    ->numeric()
-                    ->placeholder('-'),
-                TextEntry::make('user_id')
-                    ->numeric()
-                    ->placeholder('-'),
-                TextEntry::make('customer_id')
-                    ->numeric()
-                    ->placeholder('-'),
-                TextEntry::make('payment_method_id')
-                    ->numeric()
-                    ->placeholder('-'),
-                TextEntry::make('date')
-                    ->date(),
-                TextEntry::make('total_refund')
-                    ->numeric(),
-                TextEntry::make('notes')
-                    ->placeholder('-')
-                    ->columnSpanFull(),
-                TextEntry::make('created_at')
-                    ->dateTime()
-                    ->placeholder('-'),
-                TextEntry::make('updated_at')
-                    ->dateTime()
-                    ->placeholder('-'),
-            ]);
+                Section::make('Return of Sale Information')
+                    ->schema([
+                        TextEntry::make('date')
+                            ->date(),
+                        TextEntry::make('user.name')
+                            ->label('User')
+                            ->placeholder('-'),
+                        TextEntry::make('sale.invoice_number')
+                            ->label('Sale Invoice Number')
+                            ->placeholder('-'),
+                        TextEntry::make('customer.name')
+                            ->label('Customer')
+                            ->placeholder('-'),
+                        TextEntry::make('paymentMethod.name')
+                            ->label('Payment Method')
+                            ->placeholder('-'),
+                        TextEntry::make('total_refund')
+                            ->label('Total Refund')
+                            ->money('IDR', true),
+                        TextEntry::make('notes')
+                            ->placeholder('-')
+                            ->columnSpanFull(),
+                        TextEntry::make('created_at')
+                            ->label('Created At')
+                            ->dateTime()
+                            ->placeholder('-'),
+                        TextEntry::make('updated_at')
+                            ->label('Last Updated')
+                            ->dateTime()
+                            ->placeholder('-'),
+                    ])->columns(2),
+            ])
+            ->columns(1);
     }
 }

@@ -13,6 +13,7 @@ use App\Filament\Resources\ReturnSales\Pages\EditReturnSale;
 use App\Filament\Resources\ReturnSales\Pages\ViewReturnSale;
 use App\Filament\Resources\ReturnSales\Pages\ListReturnSales;
 use App\Filament\Resources\ReturnSales\Pages\CreateReturnSale;
+use App\Filament\Resources\ReturnSales\RelationManagers\ReturnSaleDetailsRelationManager;
 use App\Filament\Resources\ReturnSales\Schemas\ReturnSaleForm;
 use App\Filament\Resources\ReturnSales\Tables\ReturnSalesTable;
 use App\Filament\Resources\ReturnSales\Schemas\ReturnSaleInfolist;
@@ -49,7 +50,7 @@ class ReturnSaleResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ReturnSaleDetailsRelationManager::class,
         ];
     }
 
